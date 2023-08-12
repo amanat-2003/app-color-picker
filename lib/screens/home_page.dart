@@ -1,6 +1,5 @@
-import 'package:app_color_picker/extensions/string/remove_all.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer';
+import 'package:flutter/services.dart';
 
 import 'package:app_color_picker/extensions/string/as_html_color_to_color.dart';
 import 'package:app_color_picker/utils/show_snack_bar.dart';
@@ -65,16 +64,22 @@ class _HomePageState extends State<HomePage> {
     ];
   }
 
-  void _generateCode() {
-    var loopCode = '';
+  void _generateCodeByColorCodes() async {
+    var loopCodeDark = '';
+    var loopCodeLight = '';
 
     for (final colorObj in darkColorObjList) {
-      loopCode = loopCode +
-          'static const ${colorObj.colorName} = \'${colorObj.color.value}\'.htmlColorToColor();\n';
+      loopCodeDark =
+          '${loopCodeDark}static final ${colorObj.colorName} = Color(int.parse(\'${colorObj.color.value}\'));\n';
     }
 
-    log(loopCode);
-    debugPrint(loopCode, wrapWidth: 1024);
+    for (final colorObj in lightColorObjList) {
+      loopCodeLight =
+          '${loopCodeLight}static final ${colorObj.colorName} = Color(int.parse(\'${colorObj.color.value}\'));\n';
+    }
+
+    // debugPrint(loopCodeDark, wrapWidth: 1024);
+    // debugPrint(loopCodeLight, wrapWidth: 1024);
 
     _code = '''
 import 'package:flutter/material.dart'
@@ -90,15 +95,6 @@ extension RemoveAll on String {
           result.replaceAll(pattern, ''));
 }
 
-extension AsHtmlColorToColor on String {
-  Color htmlColorToColor() => Color(
-        int.parse(
-          removeAll(['0x', '#']).padLeft(8, 'ff'),
-          radix: 16,
-        ),
-      );
-}
-
 
 @immutable
 class AppColors {
@@ -106,53 +102,104 @@ class AppColors {
     seedColor: AppColors.lightSeedColor,
     brightness: Brightness.light,
   );
-
+  
   static final darkColorScheme = ColorScheme.fromSeed(
     seedColor: AppColors.darkSeedColor,
     brightness: Brightness.dark,
   );
 
-  static const lightSeedColor = Color(
+  static final lightSeedColor = Color(
         int.parse(
           '${lightHexController.text}'.removeAll(['0x', '#']).padLeft(8, 'ff'),
           radix: 16,
         ),
       );
-  static const darkSeedColor = Color(
+  static final darkSeedColor = Color(
         int.parse(
           '${darkHexController.text}'.removeAll(['0x', '#']).padLeft(8, 'ff'),
           radix: 16,
         ),
       );
 
-  static const smallTextColor = Color.fromARGB(190, 198, 138, 59);
-  static final darkBackgroundColor = darkColorScheme.background;
-  static final lightPinkColor = darkColorScheme.error;
-  static final darkRedColor = darkColorScheme.errorContainer;
-  static final lightBrownColor = darkColorScheme.inversePrimary;
-  static final whiteColor = darkColorScheme.inverseSurface;
-  static final greyColor = darkColorScheme.onInverseSurface;
-  static final darkBrownColor = darkColorScheme.onPrimary;
-  static final brightCreamColor = darkColorScheme.onPrimaryContainer;
-  static final dullBrownColor = darkColorScheme.onSecondary;
-  static final dullWhiteColor = darkColorScheme.onSurfaceVariant;
-  static final darkGreenColor = darkColorScheme.onTertiary;
-  static final brightGreenColor = darkColorScheme.tertiary;
-  static final lightBrownGreyColor = darkColorScheme.outline;
-  static final darkBrownGreyColor = darkColorScheme.outlineVariant;
-  static final primaryDarkModeColor = darkColorScheme.primary;
-  static final primaryLightModeColor = colorScheme.primary;
-  static final brownColor = darkColorScheme.primaryContainer;
-  static final blackColor = darkColorScheme.scrim;
-  static final creamColor = darkColorScheme.secondary;
-  static final brightBrownColor = darkColorScheme.surfaceTint;
-  static final lightGreenColor = darkColorScheme.tertiaryContainer;
-  static final color2 = darkColorScheme.onBackground;
+  $loopCodeLight
 
+  $loopCodeDark
+  
   const AppColors._();
 }
+  ''';
 
-''';
+    await Clipboard.setData(ClipboardData(text: _code));
+    // debugPrint(_code, wrapWidth: 1024);
+  }
+
+  void _generateCodeByColorSchemeProperties() async {
+    var loopCodeDark = '';
+    var loopCodeLight = '';
+
+    for (final colorObj in darkColorObjList) {
+      loopCodeDark =
+          '${loopCodeDark}static final ${colorObj.colorName} = darkColorScheme.${colorObj.colorType.name};\n';
+    }
+
+    for (final colorObj in lightColorObjList) {
+      loopCodeLight =
+          '${loopCodeLight}static final ${colorObj.colorName} = lightColorScheme.${colorObj.colorType.name};\n';
+    }
+
+    debugPrint(loopCodeDark, wrapWidth: 1024);
+    debugPrint(loopCodeLight, wrapWidth: 1024);
+
+    _code = '''
+import 'package:flutter/material.dart'
+    show immutable, Color, ColorScheme, Brightness;
+
+extension RemoveAll on String {
+  String removeAll(Iterable<String> values) => values.fold(
+      this,
+      (
+        String result,
+        String pattern,
+      ) =>
+          result.replaceAll(pattern, ''));
+}
+
+
+@immutable
+class AppColors {
+  static final lightColorScheme = ColorScheme.fromSeed(
+    seedColor: AppColors.lightSeedColor,
+    brightness: Brightness.light,
+  );
+  
+  static final darkColorScheme = ColorScheme.fromSeed(
+    seedColor: AppColors.darkSeedColor,
+    brightness: Brightness.dark,
+  );
+
+  static final lightSeedColor = Color(
+        int.parse(
+          '${lightHexController.text}'.removeAll(['0x', '#']).padLeft(8, 'ff'),
+          radix: 16,
+        ),
+      );
+  static final darkSeedColor = Color(
+        int.parse(
+          '${darkHexController.text}'.removeAll(['0x', '#']).padLeft(8, 'ff'),
+          radix: 16,
+        ),
+      );
+
+  $loopCodeLight
+
+  $loopCodeDark
+  
+  const AppColors._();
+}
+  ''';
+
+    await Clipboard.setData(ClipboardData(text: _code));
+    debugPrint(_code, wrapWidth: 1024);
   }
 
   void _submitDark() {
@@ -318,10 +365,20 @@ class AppColors {
       appBar: AppBar(
         title: const Text('App Color Picker'),
         actions: [
-          IconButton(
-            onPressed: _generateCode,
+          const Text('Generate Code by'),
+          const SizedBox(width: 10),
+          ElevatedButton.icon(
+            onPressed: _generateCodeByColorCodes,
             icon: const Icon(Icons.code),
-          )
+            label: const Text('Color Codes (Recommended)'),
+          ),
+          const SizedBox(width: 10),
+          ElevatedButton.icon(
+            onPressed: _generateCodeByColorSchemeProperties,
+            icon: const Icon(Icons.code_off),
+            label: const Text('Color Scheme Properties'),
+          ),
+          const SizedBox(width: 10),
         ],
       ),
       body: Padding(
@@ -332,14 +389,6 @@ class AppColors {
         ),
         child: Row(
           children: [
-            Container(
-              height: 200,
-              width: 200,
-              color: Color(int.parse(
-                '4294948011'.removeAll(['0x', '#']).padLeft(8, 'ff'),
-                radix: 32,
-              )),
-            ),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 36),
