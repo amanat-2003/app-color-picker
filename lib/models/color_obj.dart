@@ -13,16 +13,6 @@ class ColorObj {
     required this.colorName,
   });
 
-  @override
-  bool operator ==(covariant ColorObj other) {
-    if (identical(this, other)) return true;
-
-    return other.color.value == color.value;
-  }
-
-  @override
-  int get hashCode => color.value.hashCode;
-
   ColorObj copyWith({
     Color? color,
     ColorType? colorType,
@@ -37,4 +27,17 @@ class ColorObj {
 
   @override
   String toString() => 'ColorObj(color: $color, colorType: $colorType, colorName: $colorName)';
+
+  @override
+  bool operator ==(covariant ColorObj other) {
+    if (identical(this, other)) return true;
+  
+    return 
+      other.color == color &&
+      other.colorType == colorType &&
+      other.colorName == colorName;
+  }
+
+  @override
+  int get hashCode => color.hashCode ^ colorType.hashCode ^ colorName.hashCode;
 }

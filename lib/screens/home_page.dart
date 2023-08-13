@@ -42,9 +42,9 @@ class _HomePageState extends State<HomePage> {
     darkColorObjList = [
       for (final colorMapEntry in colorClass.darkColorMap.entries)
         ColorObj(
-          color: colorMapEntry.key,
-          colorType: colorMapEntry.value,
-          colorName: '${colorMapEntry.value.name}DarkMode',
+          color: colorMapEntry.value,
+          colorType: colorMapEntry.key,
+          colorName: '${colorMapEntry.key.name}DarkMode',
         )
     ];
 
@@ -57,9 +57,9 @@ class _HomePageState extends State<HomePage> {
     lightColorObjList = [
       for (final colorMapEntry in colorClass.lightColorMap.entries)
         ColorObj(
-          color: colorMapEntry.key,
-          colorType: colorMapEntry.value,
-          colorName: '${colorMapEntry.value.name}LightMode',
+          color: colorMapEntry.value,
+          colorType: colorMapEntry.key,
+          colorName: '${colorMapEntry.key.name}LightMode',
         )
     ];
   }
@@ -210,9 +210,9 @@ class AppColors {
         darkColorObjList = [
           for (final colorMapEntry in colorClass.darkColorMap.entries)
             ColorObj(
-              color: colorMapEntry.key,
-              colorType: colorMapEntry.value,
-              colorName: '${colorMapEntry.value.name}DarkMode',
+              color: colorMapEntry.value,
+              colorType: colorMapEntry.key,
+              colorName: '${colorMapEntry.key.name}DarkMode',
             )
         ];
       });
@@ -231,9 +231,9 @@ class AppColors {
         lightColorObjList = [
           for (final colorMapEntry in colorClass.lightColorMap.entries)
             ColorObj(
-              color: colorMapEntry.key,
-              colorType: colorMapEntry.value,
-              colorName: '${colorMapEntry.value.name}LightMode',
+              color: colorMapEntry.value,
+              colorType: colorMapEntry.key,
+              colorName: '${colorMapEntry.key.name}LightMode',
             )
         ];
       });
@@ -459,7 +459,9 @@ class AppColors {
                                   colorObj: darkColorObjList[index],
                                   onPressed: () {
                                     _showDialogDark(
-                                        darkColorObjList[index], context);
+                                      darkColorObjList[index],
+                                      context,
+                                    );
                                   },
                                 );
                               },
@@ -508,7 +510,9 @@ class AppColors {
                                   colorObj: lightColorObjList[index],
                                   onPressed: () {
                                     _showDialogLight(
-                                        lightColorObjList[index], context);
+                                      lightColorObjList[index],
+                                      context,
+                                    );
                                   },
                                 );
                               },
@@ -596,7 +600,9 @@ class AppColors {
                                     colorObj: darkColorObjList[index],
                                     onPressed: () {
                                       _showDialogDark(
-                                          darkColorObjList[index], context);
+                                        darkColorObjList[index],
+                                        context,
+                                      );
                                     },
                                   );
                                 },
@@ -641,7 +647,9 @@ class AppColors {
                                     colorObj: lightColorObjList[index],
                                     onPressed: () {
                                       _showDialogLight(
-                                          lightColorObjList[index], context);
+                                        lightColorObjList[index],
+                                        context,
+                                      );
                                     },
                                   );
                                 },
