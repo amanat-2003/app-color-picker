@@ -98,7 +98,7 @@ extension RemoveAll on String {
 
 @immutable
 class AppColors {
-  static final colorScheme = ColorScheme.fromSeed(
+  static final lightColorScheme = ColorScheme.fromSeed(
     seedColor: AppColors.lightSeedColor,
     brightness: Brightness.light,
   );
@@ -361,135 +361,308 @@ class AppColors {
   Widget build(BuildContext context) {
     '4293113343'.htmlColorToColor();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('App Color Picker'),
-        actions: [
-          const Text('Generate Code by'),
-          const SizedBox(width: 10),
-          ElevatedButton.icon(
-            onPressed: _generateCodeByColorCodes,
-            icon: const Icon(Icons.code),
-            label: const Text('Color Codes (Recommended)'),
-          ),
-          const SizedBox(width: 10),
-          ElevatedButton.icon(
-            onPressed: _generateCodeByColorSchemeProperties,
-            icon: const Icon(Icons.code_off),
-            label: const Text('Color Scheme Properties'),
-          ),
-          const SizedBox(width: 10),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(
-          left: 10,
-          right: 10,
-          bottom: 36,
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 36),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 350,
-                          child: TextField(
-                            controller: darkHexController,
-                            decoration: const InputDecoration(
-                                labelText:
-                                    'Hex code of seed color of dark theme'),
-                          ),
-                        ),
-                        const SizedBox(width: 50),
-                        IconButton(
-                          onPressed: _submitDark,
-                          icon: const Icon(Icons.check),
-                        )
-                      ],
-                    ),
-                    const SizedBox(height: 36),
-                    Expanded(
-                      child: GridView.builder(
-                        itemCount: colorClass.darkColorList.length,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          mainAxisSpacing: 5,
-                          crossAxisSpacing: 5,
-                        ),
-                        itemBuilder: (context, index) {
-                          return ColorGridTile(
-                            colorObj: darkColorObjList[index],
-                            onPressed: () {
-                              _showDialogDark(darkColorObjList[index], context);
-                            },
-                          );
-                        },
-                      ),
-                    )
-                  ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        'constraints.maxHeight = ${constraints.maxHeight}'.log();
+        'constraints.minHeight = ${constraints.minHeight}'.log();
+        'constraints.maxWidth = ${constraints.maxWidth}'.log();
+        'constraints.minWidth = ${constraints.minWidth}'.log();
+
+        final width = constraints.minWidth;
+        final height = constraints.minHeight -
+            MediaQuery.of(context).padding.vertical -
+            kToolbarHeight;
+
+        height.log();
+
+        final int smallScreenCrossAxisCount;
+        final int largeScreenCrossAxisCount;
+
+        if (width < 900 && width > 785) {
+          smallScreenCrossAxisCount = 4;
+        } else if (width <= 785 && width > 630) {
+          smallScreenCrossAxisCount = 3;
+        } else if (width <= 630) {
+          smallScreenCrossAxisCount = 2;
+        } else {
+          smallScreenCrossAxisCount = 3;
+        }
+
+        if (width >= 900 && width < 1150) {
+          largeScreenCrossAxisCount = 2;
+        } else {
+          largeScreenCrossAxisCount = 3;
+        }
+
+        if (width >= 900) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('App Color Picker'),
+              actions: [
+                const Text('Generate Code by'),
+                const SizedBox(width: 10),
+                ElevatedButton.icon(
+                  onPressed: _generateCodeByColorCodes,
+                  icon: const Icon(Icons.code),
+                  label: const Text('Color Codes (Recommended)'),
                 ),
+                const SizedBox(width: 10),
+                ElevatedButton.icon(
+                  onPressed: _generateCodeByColorSchemeProperties,
+                  icon: const Icon(Icons.code_off),
+                  label: const Text('Color Scheme Properties'),
+                ),
+                const SizedBox(width: 10),
+              ],
+            ),
+            body: Padding(
+              padding: const EdgeInsets.only(
+                left: 10,
+                right: 10,
+                bottom: 36,
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 36),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: darkHexController,
+                                  decoration: const InputDecoration(
+                                      labelText:
+                                          'Hex code of seed color of dark theme'),
+                                ),
+                              ),
+                              const SizedBox(width: 50),
+                              IconButton(
+                                onPressed: _submitDark,
+                                icon: const Icon(Icons.check),
+                              )
+                            ],
+                          ),
+                          const SizedBox(height: 36),
+                          Expanded(
+                            child: GridView.builder(
+                              itemCount: colorClass.darkColorList.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: largeScreenCrossAxisCount,
+                                mainAxisSpacing: 5,
+                                crossAxisSpacing: 5,
+                              ),
+                              itemBuilder: (context, index) {
+                                return ColorGridTile(
+                                  colorObj: darkColorObjList[index],
+                                  onPressed: () {
+                                    _showDialogDark(
+                                        darkColorObjList[index], context);
+                                  },
+                                );
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  const VerticalDivider(),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 36),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: lightHexController,
+                                  decoration: const InputDecoration(
+                                      labelText:
+                                          'Hex code of seed color of light theme'),
+                                ),
+                              ),
+                              const SizedBox(width: 50),
+                              IconButton(
+                                onPressed: _submitLight,
+                                icon: const Icon(Icons.check),
+                              )
+                            ],
+                          ),
+                          const SizedBox(height: 36),
+                          Expanded(
+                            child: GridView.builder(
+                              itemCount: colorClass.lightColorList.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: largeScreenCrossAxisCount,
+                                mainAxisSpacing: 5,
+                                crossAxisSpacing: 5,
+                              ),
+                              itemBuilder: (context, index) {
+                                return ColorGridTile(
+                                  colorObj: lightColorObjList[index],
+                                  onPressed: () {
+                                    _showDialogLight(
+                                        lightColorObjList[index], context);
+                                  },
+                                );
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            const VerticalDivider(),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 36),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 350,
-                          child: TextField(
-                            controller: lightHexController,
-                            decoration: const InputDecoration(
-                                labelText:
-                                    'Hex code of seed color of light theme'),
-                          ),
-                        ),
-                        const SizedBox(width: 50),
-                        IconButton(
-                          onPressed: _submitLight,
-                          icon: const Icon(Icons.check),
-                        )
-                      ],
-                    ),
-                    const SizedBox(height: 36),
-                    Expanded(
-                      child: GridView.builder(
-                        itemCount: colorClass.lightColorList.length,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          mainAxisSpacing: 5,
-                          crossAxisSpacing: 5,
-                        ),
-                        itemBuilder: (context, index) {
-                          return ColorGridTile(
-                            colorObj: lightColorObjList[index],
-                            onPressed: () {
-                              _showDialogLight(
-                                  lightColorObjList[index], context);
-                            },
-                          );
-                        },
+          );
+        } else {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('App Color Picker'),
+            ),
+            body: Padding(
+              padding: const EdgeInsets.only(
+                left: 10,
+                right: 10,
+                bottom: 10,
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('Generate Code by'),
+                      const SizedBox(width: 10),
+                      TextButton.icon(
+                        onPressed: _generateCodeByColorCodes,
+                        icon: const Icon(Icons.code),
+                        label: Text(width < 600 ? '' : 'Color Codes'),
                       ),
-                    )
-                  ],
-                ),
+                      const SizedBox(width: 10),
+                      TextButton.icon(
+                        onPressed: _generateCodeByColorSchemeProperties,
+                        icon: const Icon(Icons.code_off),
+                        label: Text(width < 600 ? '' : 'Color Scheme'),
+                      ),
+                      const SizedBox(width: 10),
+                    ],
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    controller: darkHexController,
+                                    decoration: const InputDecoration(
+                                        labelText:
+                                            'Hex code of seed color of dark theme'),
+                                  ),
+                                ),
+                                const SizedBox(width: 50),
+                                IconButton(
+                                  onPressed: _submitDark,
+                                  icon: const Icon(Icons.check),
+                                )
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 36,
+                            ),
+                            SizedBox(
+                              height: height - 200,
+                              child: GridView.builder(
+                                itemCount: colorClass.darkColorList.length,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: smallScreenCrossAxisCount,
+                                  mainAxisSpacing: 10,
+                                  crossAxisSpacing: 10,
+                                ),
+                                itemBuilder: (context, index) {
+                                  return ColorGridTile(
+                                    colorObj: darkColorObjList[index],
+                                    onPressed: () {
+                                      _showDialogDark(
+                                          darkColorObjList[index], context);
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 36,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    controller: lightHexController,
+                                    decoration: const InputDecoration(
+                                        labelText:
+                                            'Hex code of seed color of light theme'),
+                                  ),
+                                ),
+                                const SizedBox(width: 50),
+                                IconButton(
+                                  onPressed: _submitLight,
+                                  icon: const Icon(Icons.check),
+                                )
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 36,
+                            ),
+                            SizedBox(
+                              height: height - 200,
+                              child: GridView.builder(
+                                itemCount: colorClass.lightColorList.length,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: smallScreenCrossAxisCount,
+                                  mainAxisSpacing: 5,
+                                  crossAxisSpacing: 5,
+                                ),
+                                itemBuilder: (context, index) {
+                                  return ColorGridTile(
+                                    colorObj: lightColorObjList[index],
+                                    onPressed: () {
+                                      _showDialogLight(
+                                          lightColorObjList[index], context);
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 36,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
+          );
+        }
+      },
     );
   }
 }
