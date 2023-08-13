@@ -24,3 +24,5 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+// <a href="https://www.flaticon.com/free-icons/color" title="color icons">Color icons created by Nikita Golubev - Flaticon</a>

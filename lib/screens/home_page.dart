@@ -359,8 +359,6 @@ class AppColors {
 
   @override
   Widget build(BuildContext context) {
-    '4293113343'.htmlColorToColor();
-
     return LayoutBuilder(
       builder: (context, constraints) {
         'constraints.maxHeight = ${constraints.maxHeight}'.log();
