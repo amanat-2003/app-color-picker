@@ -22,7 +22,7 @@ Download the app from the [Google Play Store](https://play.google.com/store/apps
 
 ### Web Version
 
-Access the web version [here](https://amanat-2003.github.io/app-color-picker-web/).
+Access the web version [here](https://appcolorpicker.anamihub.com/#/).
 
 ## Usage
 
